@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <header>
+            <h1>Dashboard de Satisfacao</h1>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Sair</a>
+        </header>
+        
+        <section class="stats">
+            <h2>Estatisticas Totais</h2>
+            <div class="stats-grid">
+                <div class="stat-card muito-satisfeito">
+                    <span class="emoji">&#128516;</span>
+                    <span class="valor">{{ stats.get('muito_satisfeito', 0) }}</span>
+                    <span class="percentagem">
+                        {% if total > 0 %}
+                        {{ ((stats.get('muito_satisfeito', 0) / total) * 100)|round(1) }}%
+                        {% else %}0%{% endif %}
+                    </span>
+                </div>
+                <div class="stat-card satisfeito">
+                    <span class="emoji">&#128578;</span>
+                    <span class="valor">{{ stats.get('satisfeito', 0) }}</span>
+                    <span class="percentagem">
+                        {% if total > 0 %}
+                        {{ ((stats.get('satisfeito', 0) / total) * 100)|round(1) }}%
+                        {% else %}0%{% endif %}
+                    </span>
+                </div>
+                <div class="stat-card insatisfeito">
+                    <span class="emoji">&#128542;</span>
+                    <span class="valor">{{ stats.get('insatisfeito', 0) }}</span>
+                    <span class="percentagem">
+                        {% if total > 0 %}
+                        {{ ((stats.get('insatisfeito', 0) / total) * 100)|round(1) }}%
+                        {% else %}0%{% endif %}
+                    </span>
+                </div>
+            </div>
+            <p class="total">Total: {{ total }} avaliacoes</p>
+        </section>
+        
+        <section class="graficos">
+            <div class="grafico">
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="grafico">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </section>
+        
+        <section class="filtros">
+            <h2>Filtrar por Data</h2>
+            <form method="GET">
+                <select name="data" onchange="this.form.submit()">
+                    <option value="">Todas as datas</option>
+                    {% for d in datas %}
+                    <option value="{{ d }}" {% if d == filtro_data %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </section>
+        
+        <section class="exportar">
+            <h2>Exportar Dados</h2>
+            <a href="{{ url_for('exportar', formato='csv', data=filtro_data) }}" class="export-btn">CSV</a>
+            <a href="{{ url_for('exportar', formato='txt', data=filtro_data) }}" class="export-btn">TXT</a>
+        </section>
+        
+        <section class="tabela">
+            <h2>Registos ({{ registos|length }})</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Satisfacao</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Dia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in registos %}
+                    <tr>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.grau_satisfacao }}</td>
+                        <td>{{ r.data }}</td>
+                        <td>{{ r.hora }}</td>
+                        <td>{{ r.dia_semana }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+    
+    <script>
+        const stats = {
+            muito_satisfeito: {{ stats.get('muito_satisfeito', 0) }},
+            satisfeito: {{ stats.get('satisfeito', 0) }},
+            insatisfeito: {{ stats.get('insatisfeito', 0) }}
+        };
+        
+        // Grafico de Barras
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Muito Satisfeito', 'Satisfeito', 'Insatisfeito'],
+                datasets: [{
+                    data: [stats.muito_satisfeito, stats.satisfeito, stats.insatisfeito],
+                    backgroundColor: ['#22c55e', '#3b82f6', '#ef4444']
+                }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
+        
+        // Grafico Circular
+        new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Muito Satisfeito', 'Satisfeito', 'Insatisfeito'],
+                datasets: [{
+                    data: [stats.muito_satisfeito, stats.satisfeito, stats.insatisfeito],
+                    backgroundColor: ['#22c55e', '#3b82f6', '#ef4444']
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

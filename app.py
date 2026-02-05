@@ -14,7 +14,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
 if load_dotenv:
     load_dotenv()
 
-# --- Configuração Database ---
+# --- ConfiguraÃ§Ã£o Database ---
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -83,7 +83,7 @@ def index():
 def submit_feedback():
     grau = request.form.get('grau') or (request.get_json(silent=True) or {}).get('grau')
     if grau not in ('muito_satisfeito', 'satisfeito', 'insatisfeito'):
-        return jsonify({'ok': False, 'message': 'Grau inválido'}), 400
+        return jsonify({'ok': False, 'message': 'Grau invÃ¡lido'}), 400
     now = datetime.now()
     feedback = Feedback(
         grau_satisfacao=grau,
@@ -104,7 +104,7 @@ def admin_login():
         if user == ADMIN_USER and password == ADMIN_PASSWORD:
             session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
-        return render_template('admin_login.html', error='Credenciais inválidas')
+        return render_template('admin_login.html', error='Credenciais invÃ¡lidas')
     return render_template('admin_login.html', error=None)
 
 
@@ -133,7 +133,7 @@ def admin_dashboard():
     q_day = Feedback.query.filter(Feedback.data == day)
     stats = count_by_grau(q_day)
 
-    # Temporal (últimos 7 dias)
+    # Temporal (Ãºltimos 7 dias)
     labels = []
     values = []
     for i in range(6, -1, -1):
@@ -141,7 +141,7 @@ def admin_dashboard():
         labels.append(d)
         values.append(Feedback.query.filter(Feedback.data == d).count())
 
-    # Comparação entre dias
+    # ComparaÃ§Ã£o entre dias
     compare_data = None
     if compare_a and compare_b:
         a_date = parse_date_ymd(compare_a)
@@ -202,4 +202,4 @@ def export_data():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)

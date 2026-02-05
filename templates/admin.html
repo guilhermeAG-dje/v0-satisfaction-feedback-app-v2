@@ -1,94 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin ? LembreMe</title>
-  <link rel="stylesheet" href="/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Avaliacao</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <header>
-    <div class="brand">
-      <div class="logo">LM</div>
-      <div>
-        <h1>Painel Admin</h1>
-        <p class="subtitle">Gest?o completa</p>
-      </div>
+<body class="admin-page">
+  <header class="admin-header">
+    <div>
+      <h1>Painel Administrativo</h1>
+      <p>Analise de satisfacao</p>
     </div>
-    <div class="actions">
-      <a class="ghost-btn small-btn" href="/admin_2026/export/all">Exportar Tudo</a>
-      <a class="ghost-btn" href="/admin_2026/logout">Sair</a>
+    <div class="admin-actions">
+      <a class="btn-outline" href="/admin_2026/logout">Sair</a>
     </div>
   </header>
 
-  <main>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <p class="muted">{{ messages[0] }}</p>
-      {% endif %}
-    {% endwith %}
+  <main class="admin-container">
+    <section class="cards">
+      <div class="card">
+        <h3>Total Hoje ({{ day }})</h3>
+        <p class="big">{{ stats.total }}</p>
+      </div>
+      <div class="card">
+        <h3>Muito Satisfeito</h3>
+        <p class="big">{{ stats.muito }}</p>
+        <span class="muted">{{ stats.pct_muito }}%</span>
+      </div>
+      <div class="card">
+        <h3>Satisfeito</h3>
+        <p class="big">{{ stats.satis }}</p>
+        <span class="muted">{{ stats.pct_satis }}%</span>
+      </div>
+      <div class="card">
+        <h3>Insatisfeito</h3>
+        <p class="big">{{ stats.insatis }}</p>
+        <span class="muted">{{ stats.pct_insatis }}%</span>
+      </div>
+    </section>
 
-    <section class="grid">
-      <div class="card">
-        <div class="card-header"><h2>Total</h2></div>
-        <div class="med-title">{{ total }}</div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Muito Satisfeito</h2></div>
-        <div class="med-title">{{ muito_satisfeito }} ({{ pct_muito }}%)</div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Satisfeito</h2></div>
-        <div class="med-title">{{ satisfeito }} ({{ pct_satisfeito }}%)</div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h2>Insatisfeito</h2></div>
-        <div class="med-title">{{ insatisfeito }} ({{ pct_insatisfeito }}%)</div>
-      </div>
+    <section class="filters">
+      <form method="GET" class="filter-box">
+        <label>Filtrar por dia</label>
+        <input type="date" name="day" value="{{ day }}">
+        <button type="submit">Aplicar</button>
+        <a class="btn-outline" href="/admin_2026?day={{ today }}">Hoje</a>
+      </form>
+      <form method="GET" class="filter-box">
+        <label>Comparar dias</label>
+        <input type="date" name="compare_a" value="{{ compare_data.a if compare_data }}">
+        <input type="date" name="compare_b" value="{{ compare_data.b if compare_data }}">
+        <button type="submit">Comparar</button>
+      </form>
+    </section>
 
-      <div class="card history-card">
-        <div class="card-header">
-          <h2>Utilizadores</h2>
-        </div>
-        <div class="tomas-list">
-          {% for u in users %}
-          <div class="toma-item">
-            <div>
-              <div class="med-title">{{ u.email }}</div>
-              <div class="med-meta">Telem?vel: {{ u.phone or '?' }} ? Medicamentos: {{ u.meds }} ? Tomas: {{ u.tomas }}</div>
-            </div>
-            <div class="actions">
-              <a class="ghost-btn small-btn" href="/admin_2026/users/{{ u.id }}">Ver</a>
-              <form method="post" action="/admin_2026/users/{{ u.id }}/delete" style="display:inline;">
-                <button class="delete-btn" type="submit">Apagar</button>
-              </form>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
+    <section class="charts">
+      <div class="chart-card">
+        <h3>Grafico de Barras</h3>
+        <canvas id="barChart"></canvas>
       </div>
+      <div class="chart-card">
+        <h3>Grafico Circular</h3>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </section>
 
-      <div class="card history-card">
-        <div class="card-header">
-          <h2>Feedback</h2>
-          <div>
-            <a class="ghost-btn small-btn" href="/admin_2026/export/csv">Exportar CSV</a>
-            <a class="ghost-btn small-btn" href="/admin_2026/export/txt">Exportar TXT</a>
-          </div>
+    <section class="charts">
+      <div class="chart-card full">
+        <h3>Analise Temporal (Ultimos 7 dias)</h3>
+        <canvas id="lineChart"></canvas>
+      </div>
+    </section>
+
+    {% if compare_data %}
+    <section class="compare">
+      <h3>Comparacao entre dias</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>{{ compare_data.a }}</h4>
+          <p>Muito: {{ compare_data.a_stats.muito }}</p>
+          <p>Satisfeito: {{ compare_data.a_stats.satis }}</p>
+          <p>Insatisfeito: {{ compare_data.a_stats.insatis }}</p>
         </div>
-        <div class="tomas-list">
-          {% for f in feedbacks %}
-          <div class="toma-item">
-            <div>
-              <div class="med-title">{{ f.grau_satisfacao }}</div>
-              <div class="med-meta">{{ f.dia_semana }}</div>
-            </div>
-            <div class="toma-time">{{ f.data }} ? {{ f.hora }}</div>
-          </div>
-          {% endfor %}
+        <div class="compare-card">
+          <h4>{{ compare_data.b }}</h4>
+          <p>Muito: {{ compare_data.b_stats.muito }}</p>
+          <p>Satisfeito: {{ compare_data.b_stats.satis }}</p>
+          <p>Insatisfeito: {{ compare_data.b_stats.insatis }}</p>
         </div>
       </div>
     </section>
+    {% endif %}
+
+    <section class="table-section">
+      <div class="table-header">
+        <h3>Registos do Dia ({{ day }})</h3>
+        <div class="export">
+          <form method="GET" action="/admin_2026/export" class="export-form">
+            <input type="date" name="start" value="{{ day }}">
+            <input type="date" name="end" value="{{ day }}">
+            <button name="format" value="csv" type="submit">Exportar CSV</button>
+            <button name="format" value="txt" type="submit" class="btn-outline">Exportar TXT</button>
+          </form>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Grau</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Dia Semana</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.grau_satisfacao }}</td>
+            <td>{{ r.data }}</td>
+            <td>{{ r.hora }}</td>
+            <td>{{ r.dia_semana }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="pagination">
+        {% if page > 1 %}
+          <a href="/admin_2026?day={{ day }}&page={{ page - 1 }}&limit={{ limit }}">Anterior</a>
+        {% endif %}
+        <span>Pagina {{ page }}</span>
+        {% if total_records > page * limit %}
+          <a href="/admin_2026?day={{ day }}&page={{ page + 1 }}&limit={{ limit }}">Proxima</a>
+        {% endif %}
+      </div>
+    </section>
   </main>
+
+  <script>
+    const stats = {{ stats | tojson }};
+    const labels = {{ labels | tojson }};
+    const values = {{ values | tojson }};
+
+    const barCtx = document.getElementById('barChart');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Muito satisfeito', 'Satisfeito', 'Insatisfeito'],
+        datasets: [{
+          data: [stats.muito, stats.satis, stats.insatis],
+          backgroundColor: ['#22c55e', '#f59e0b', '#ef4444']
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const pieCtx = document.getElementById('pieChart');
+    new Chart(pieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Muito satisfeito', 'Satisfeito', 'Insatisfeito'],
+        datasets: [{
+          data: [stats.muito, stats.satis, stats.insatis],
+          backgroundColor: ['#22c55e', '#f59e0b', '#ef4444']
+        }]
+      },
+      options: { responsive: true }
+    });
+
+    const lineCtx = document.getElementById('lineChart');
+    new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Total por dia',
+          data: values,
+          borderColor: '#4f46e5',
+          backgroundColor: 'rgba(79, 70, 229, 0.15)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: { responsive: true }
+    });
+  </script>
 </body>
 </html>

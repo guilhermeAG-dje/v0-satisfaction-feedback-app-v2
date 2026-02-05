@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin ? LembreMe</title>
-  <link rel="stylesheet" href="/login.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
 </head>
-<body>
-  <div class="login-container">
-    <div class="login-box">
-      <h1>Admin</h1>
-      <form method="post">
-        <input type="text" name="username" placeholder="Utilizador" required />
-        <input type="password" name="password" placeholder="Palavra-passe" required />
-        <button type="submit">Entrar</button>
-      </form>
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <p id="msg">{{ messages[0] }}</p>
-        {% endif %}
-      {% endwith %}
-    </div>
-  </div>
+<body class="admin-page">
+  <main class="admin-container">
+    <h1>Area de Administracao</h1>
+    <form method="POST" class="login-box">
+      <label>Utilizador</label>
+      <input type="text" name="user" placeholder="admin" required>
+      <label>Password</label>
+      <input type="password" name="password" placeholder="admin123" required>
+      <button type="submit">Entrar</button>
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
+    </form>
+  </main>
 </body>
 </html>

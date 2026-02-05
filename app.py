@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, redirect, url_for, session, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -202,4 +203,4 @@ def export_data():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)

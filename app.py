@@ -105,7 +105,7 @@ def admin_login():
         if user == ADMIN_USER and password == ADMIN_PASSWORD:
             session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
-        return render_template('admin_login.html', error='Credenciais inválidas')
+        return redirect(url_for('index'))
     return render_template('admin_login.html', error=None)
 
 

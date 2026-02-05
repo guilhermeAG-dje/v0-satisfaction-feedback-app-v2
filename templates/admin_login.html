@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login</title>
+  <title>Admin - Entrada</title>
   <link rel="stylesheet" href="/static/css/admin.css">
 </head>
 <body class="admin-page">
@@ -12,12 +12,9 @@
     <form method="POST" class="login-box">
       <label>Utilizador</label>
       <input type="text" name="user" placeholder="admin" required>
-      <label>Password</label>
+      <label>Palavra-passe</label>
       <input type="password" name="password" placeholder="admin123" required>
       <button type="submit">Entrar</button>
-      {% if error %}
-        <p class="error">{{ error }}</p>
-      {% endif %}
     </form>
   </main>
 </body>

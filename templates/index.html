@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliacao de Satisfacao</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Como foi o seu atendimento?</h1>
+        
+        <div class="buttons" id="buttons">
+            <button class="btn muito-satisfeito" data-grau="muito_satisfeito" onclick="registar('muito_satisfeito')">
+                <span class="emoji">&#128516;</span>
+                <span class="label">Muito Satisfeito</span>
+            </button>
+            
+            <button class="btn satisfeito" data-grau="satisfeito" onclick="registar('satisfeito')">
+                <span class="emoji">&#128578;</span>
+                <span class="label">Satisfeito</span>
+            </button>
+            
+            <button class="btn insatisfeito" data-grau="insatisfeito" onclick="registar('insatisfeito')">
+                <span class="emoji">&#128542;</span>
+                <span class="label">Insatisfeito</span>
+            </button>
+        </div>
+        
+        <div class="mensagem" id="mensagem" style="display: none;">
+            <span class="emoji-grande">&#10004;</span>
+            <p>Obrigado pela sua avaliacao!</p>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

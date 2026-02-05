@@ -11,7 +11,7 @@
   <header class="admin-header">
     <div>
       <h1>Painel Administrativo</h1>
-      <p>Analise de satisfacao</p>
+      <p>An?lise de satisfa??o</p>
     </div>
     <div class="admin-actions">
       <a class="btn-outline" href="/admin_2026/logout">Sair</a>
@@ -58,25 +58,25 @@
 
     <section class="charts">
       <div class="chart-card">
-        <h3>Grafico de Barras</h3>
+        <h3>Gr?fico de Barras</h3>
         <canvas id="barChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>Grafico Circular</h3>
+        <h3>Gr?fico Circular</h3>
         <canvas id="pieChart"></canvas>
       </div>
     </section>
 
     <section class="charts">
       <div class="chart-card full">
-        <h3>Analise Temporal (Ultimos 7 dias)</h3>
+        <h3>An?lise Temporal (?ltimos 7 dias)</h3>
         <canvas id="lineChart"></canvas>
       </div>
     </section>
 
     {% if compare_data %}
     <section class="compare">
-      <h3>Comparacao entre dias</h3>
+      <h3>Compara??o entre dias</h3>
       <div class="compare-grid">
         <div class="compare-card">
           <h4>{{ compare_data.a }}</h4>
@@ -132,9 +132,9 @@
         {% if page > 1 %}
           <a href="/admin_2026?day={{ day }}&page={{ page - 1 }}&limit={{ limit }}">Anterior</a>
         {% endif %}
-        <span>Pagina {{ page }}</span>
+        <span>P?gina {{ page }}</span>
         {% if total_records > page * limit %}
-          <a href="/admin_2026?day={{ day }}&page={{ page + 1 }}&limit={{ limit }}">Proxima</a>
+          <a href="/admin_2026?day={{ day }}&page={{ page + 1 }}&limit={{ limit }}">Pr?xima</a>
         {% endif %}
       </div>
     </section>

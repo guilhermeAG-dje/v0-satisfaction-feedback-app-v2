@@ -20,7 +20,7 @@ body.admin-page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 5vw;
+  padding: 24px 6vw;
   border-bottom: 1px solid var(--border);
   gap: 12px;
 }

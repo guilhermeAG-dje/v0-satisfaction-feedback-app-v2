@@ -24,6 +24,20 @@ db = SQLAlchemy(app)
 ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin123')
 
+WEEKDAY_PT = {
+    'Monday': 'Segunda-feira',
+    'Tuesday': 'Terca-feira',
+    'Wednesday': 'Quarta-feira',
+    'Thursday': 'Quinta-feira',
+    'Friday': 'Sexta-feira',
+    'Saturday': 'Sabado',
+    'Sunday': 'Domingo'
+}
+
+def weekday_pt(name):
+    return WEEKDAY_PT.get(name, name)
+
+
 # --- Modelos ---
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -90,7 +104,7 @@ def submit_feedback():
         grau_satisfacao=grau,
         data=now.strftime("%Y-%m-%d"),
         hora=now.strftime("%H:%M:%S"),
-        dia_semana=now.strftime("%A")
+        dia_semana=weekday_pt(now.strftime("%A"))
     )
     db.session.add(feedback)
     db.session.commit()
@@ -159,6 +173,8 @@ def admin_dashboard():
 
     total_records = q_day.count()
     records = q_day.order_by(Feedback.data.desc(), Feedback.hora.desc()).offset(offset).limit(limit).all()
+    for r in records:
+        r.dia_semana = weekday_pt(r.dia_semana)
 
     return render_template(
         'admin.html',

@@ -23,7 +23,7 @@ body.public-page {
 }
 
 .container {
-  width: min(980px, 92vw);
+  width: min(1040px, 94vw);
   margin: clamp(16px, 4vw, 40px) auto 16px;
   background: rgba(17, 24, 39, 0.88);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -103,7 +103,7 @@ body.public-page {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .footer-public {
-  width: min(980px, 92vw);
+  width: min(1040px, 94vw);
   margin: 0 auto 28px;
   text-align: center;
   color: var(--muted);
